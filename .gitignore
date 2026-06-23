@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+venv/
+.venv/
+env/
+*.egg-info/
+
+# Environment variables (never commit credentials)
+.env
+.env.local
+
+# Flask
+instance/
+flask_session/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# MySQL dumps (keep schema, ignore local dumps)
+*.sql.gz
+*.dump
+
+# Logs
+*.log
+logs/
