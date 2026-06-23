@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}{{ client.Name }} — Portfolio{% endblock %}
+
+{% block content %}
+<div class="gap-sm" style="margin-bottom:1.25rem">
+  <h2>{{ client.Name }}</h2>
+  <span class="muted">{{ client.Email }}</span>
+  <div class="ml-auto" style="display:flex;gap:.5rem">
+    <a class="btn btn-sm"
+       href="{{ url_for('place_order', client_id=client.Client_ID) }}">+ Place Order</a>
+    <a class="btn btn-sm btn-muted"
+       href="{{ url_for('clients') }}">← Clients</a>
+  </div>
+</div>
+
+{% if holdings %}
+<table>
+  <thead>
+    <tr>
+      <th>Symbol</th>
+      <th>Investment</th>
+      <th>Type</th>
+      <th class="num">Qty</th>
+      <th class="num">Avg Cost</th>
+      <th class="num">Current Price</th>
+      <th class="num">Unrealized P&amp;L</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for h in holdings %}
+    <tr>
+      <td><strong>{{ h.Symbol }}</strong></td>
+      <td>{{ h.Investment_Name }}</td>
+      <td>
+        {% if h.Investment_Type == 'STOCK' %}
+          <span class="badge badge-stock">Stock</span>
+        {% else %}
+          <span class="badge badge-fund">Fund</span>
+        {% endif %}
+      </td>
+      <td class="num">{{ h.Quantity }}</td>
+      <td class="num">${{ h.Average_Price | money }}</td>
+      <td class="num">
+        {% if h.Current_Price is not none %}
+          ${{ h.Current_Price | money }}
+        {% else %}—{% endif %}
+      </td>
+      <td class="num">
+        {% if h.Unrealized_PL is not none %}
+          <span class="{{ 'gain' if h.Unrealized_PL >= 0 else 'loss' }}">
+            {{ h.Unrealized_PL | pl }}
+          </span>
+        {% else %}—{% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr style="background:#f8faff">
+      <td colspan="3" style="font-weight:600;padding:.6rem .9rem">Total</td>
+      <td class="num" style="font-weight:600">
+        {{ holdings | sum(attribute='Quantity') }}
+      </td>
+      <td></td>
+      <td></td>
+      <td class="num">
+        {% set total_pl = holdings | sum(attribute='Unrealized_PL') %}
+        <span class="{{ 'gain' if total_pl >= 0 else 'loss' }}" style="font-weight:600">
+          {{ total_pl | pl }}
+        </span>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+
+{% else %}
+<div class="card" style="text-align:center;color:#6b7280;padding:2.5rem">
+  No holdings on record.
+  <a href="{{ url_for('place_order', client_id=client.Client_ID) }}">Place an order</a>
+  to add a position.
+</div>
+{% endif %}
+{% endblock %}
