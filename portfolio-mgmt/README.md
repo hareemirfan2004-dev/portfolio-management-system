@@ -43,6 +43,8 @@ portfolio-mgmt/
 │   ├── 05_triggers.sql        — 5 triggers: order validation, auto-execution, tax upsert
 │   └── 06_cursors.sql         — Stored procedure with cursor: sp_portfolio_value_report()
 ├── docs/
+│   ├── er_diagram/
+│   │   └── er_diagram.md      — Mermaid ER diagram (all 15 tables, rendered on GitHub)
 │   ├── schema-design.md       — ER description, cardinalities, FK dependency map
 │   ├── normalization.md       — 1NF → 4NF analysis for all 15 tables
 │   └── concurrency-recovery.md — Transactions, isolation levels, locking, WAL, PITR
@@ -57,7 +59,6 @@ portfolio-mgmt/
 │       └── summary.html       — ClientPortfolioSummary view
 ├── requirements.txt
 ├── .env.example               — Credential template (copy to .env)
-├── CLAUDE.md                  — Dev notes and tech decisions
 └── README.md
 ```
 
@@ -325,6 +326,7 @@ Market
 
 | Document | Contents |
 |----------|----------|
+| [`docs/er_diagram/er_diagram.md`](docs/er_diagram/er_diagram.md) | Mermaid ER diagram — all 15 tables with columns, PKs, FKs, and relationship lines |
 | [`docs/schema-design.md`](docs/schema-design.md) | Textual ER description, cardinalities, 10 integrity issues found and fixed, FK dependency map |
 | [`docs/normalization.md`](docs/normalization.md) | 1NF–4NF analysis for all 15 tables; decompositions for violations; 4NF MVD example |
 | [`docs/concurrency-recovery.md`](docs/concurrency-recovery.md) | Transactions, ACID, isolation levels with anomaly scenarios, row locking, MVCC, WAL, crash recovery, backup and PITR |
