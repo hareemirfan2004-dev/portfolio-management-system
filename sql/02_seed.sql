@@ -2,7 +2,13 @@
 -- Portfolio Management System
 -- 02_seed.sql  —  Sample data (~10 rows per table)
 -- MySQL 8.4
--- Run AFTER 01_schema.sql:
+--
+-- LOAD ORDER: run AFTER 01_schema.sql, BEFORE 05_triggers.sql.
+-- If triggers are already loaded when this file is re-run,
+-- trg_transaction_after_insert fires for the SELL transaction and
+-- inserts a Tax row, then this file's explicit Tax INSERT fails on
+-- the UNIQUE (Client_ID, Broker_ID, Tax_Year) constraint.
+--
 --   mysql -u root -p portfolio_db < sql/02_seed.sql
 -- ============================================================
 
