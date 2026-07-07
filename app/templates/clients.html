@@ -2,64 +2,68 @@
 {% block title %}Clients — Portfolio Manager{% endblock %}
 
 {% block content %}
-<h2>Clients</h2>
+<div class="gap-sm" style="margin-bottom: 1.5rem;">
+  <h2>Clients</h2>
+</div>
 
 {% if error %}
   <div class="alert alert-error">{{ error }}</div>
 {% endif %}
 
-<table>
-  <thead>
-    <tr>
-      <th style="width:3rem">#</th>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Phone</th>
-      <th style="width:10rem"></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for c in clients %}
-    <tr>
-      <td class="muted">{{ c.Client_ID }}</td>
-      <td><strong>{{ c.Name }}</strong></td>
-      <td>{{ c.Email }}</td>
-      <td>{{ c.Phone or '—' }}</td>
-      <td style="white-space:nowrap">
-        <a class="btn btn-sm"
-           href="{{ url_for('portfolio', client_id=c.Client_ID) }}">Portfolio</a>
-        <a class="btn btn-sm btn-muted"
-           href="{{ url_for('place_order', client_id=c.Client_ID) }}">Order</a>
-      </td>
-    </tr>
-    {% else %}
-    <tr class="empty-row"><td colspan="5">No clients yet — add one below.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th style="width:4rem">ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th style="width:12rem; text-align:right">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in clients %}
+      <tr>
+        <td class="muted">#{{ c.Client_ID }}</td>
+        <td style="font-weight: 500; color: #fff;">{{ c.Name }}</td>
+        <td class="muted">{{ c.Email }}</td>
+        <td class="muted">{{ c.Phone or '—' }}</td>
+        <td style="white-space:nowrap; text-align:right">
+          <a class="btn btn-sm" href="{{ url_for('portfolio', client_id=c.Client_ID) }}">Portfolio</a>
+          <a class="btn btn-sm btn-muted" href="{{ url_for('place_order', client_id=c.Client_ID) }}">Order</a>
+        </td>
+      </tr>
+      {% else %}
+      <tr class="empty-row"><td colspan="5">No clients yet — add one below.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 
 <div class="card mt1">
-  <h2>Add Client</h2>
-  <form method="post" style="margin-top:.75rem">
+  <h2>Add New Client</h2>
+  <form method="post" style="margin-top:1rem">
     <div class="form-grid">
       <div>
-        <label for="name">Name <span style="color:#b91c1c">*</span></label>
+        <label for="name">Full Name <span style="color:var(--loss)">*</span></label>
         <input id="name" name="name" type="text" required placeholder="Jane Smith">
       </div>
       <div>
-        <label for="email">Email <span style="color:#b91c1c">*</span></label>
+        <label for="email">Email Address <span style="color:var(--loss)">*</span></label>
         <input id="email" name="email" type="email" required placeholder="jane@example.com">
       </div>
       <div>
-        <label for="phone">Phone</label>
+        <label for="phone">Phone Number</label>
         <input id="phone" name="phone" type="text" placeholder="+1-555-0100">
       </div>
       <div>
-        <label for="address">Address</label>
+        <label for="address">Mailing Address</label>
         <input id="address" name="address" type="text" placeholder="123 Main St, New York, NY">
       </div>
     </div>
-    <button class="btn" type="submit" style="margin-top:.25rem">Add Client</button>
+    <div style="margin-top: 1.5rem; text-align: right;">
+      <button class="btn" type="submit">Add Client</button>
+    </div>
   </form>
 </div>
 {% endblock %}

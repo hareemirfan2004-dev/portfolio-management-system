@@ -120,7 +120,7 @@ LEFT JOIN (
         COUNT(*)                                             AS Total_Transactions,
         SUM(st.Type = 'BUY')                                AS Buy_Transactions,
         SUM(st.Type = 'SELL')                               AS Sell_Transactions,
-        ROUND(SUM(st.Price * COALESCE(o.Quantity, 1)), 2)   AS Total_Trade_Volume
+        ROUND(SUM(st.Price * st.Quantity), 2)               AS Total_Trade_Volume
     FROM  stock_transaction st
     LEFT JOIN Orders o ON st.Order_ID = o.Order_ID
     GROUP BY st.Broker_ID

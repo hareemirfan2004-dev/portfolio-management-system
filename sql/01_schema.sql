@@ -123,9 +123,9 @@ CREATE TABLE Investments (
     CONSTRAINT fk_inv_stock        FOREIGN KEY (Stock_ID)        REFERENCES Stocks       (Stock_ID),
     CONSTRAINT fk_inv_mutualfund   FOREIGN KEY (Mutual_Funds_ID) REFERENCES Mutual_Funds (Mutual_Funds_ID),
     CONSTRAINT chk_inv_exclusive   CHECK (
-        (Stock_ID IS NOT NULL AND Mutual_Funds_ID IS NULL)
+        (Investment_Type = 'STOCK' AND Stock_ID IS NOT NULL AND Mutual_Funds_ID IS NULL)
         OR
-        (Stock_ID IS NULL     AND Mutual_Funds_ID IS NOT NULL)
+        (Investment_Type = 'MUTUAL_FUND' AND Stock_ID IS NULL AND Mutual_Funds_ID IS NOT NULL)
     )
 );
 
@@ -139,6 +139,7 @@ CREATE TABLE Portfolio (
     CONSTRAINT pk_portfolio             PRIMARY KEY (Portfolio_ID),
     CONSTRAINT fk_portfolio_client      FOREIGN KEY (Client_ID)    REFERENCES Client      (Client_ID),
     CONSTRAINT fk_portfolio_investment  FOREIGN KEY (Investment_ID) REFERENCES Investments (Investment_ID),
+    CONSTRAINT uq_portfolio_client_inv  UNIQUE      (Client_ID, Investment_ID),
     CONSTRAINT chk_portfolio_qty        CHECK (Quantity      IS NULL OR Quantity      > 0),
     CONSTRAINT chk_portfolio_avg_price  CHECK (Average_Price IS NULL OR Average_Price > 0)
 );
@@ -171,6 +172,7 @@ CREATE TABLE Orders (
     Client_ID      INT                                     NOT NULL,
     Broker_ID      INT                                     NOT NULL,
     Investment_ID  INT                                     NOT NULL,
+    Order_Type     ENUM('BUY','SELL')                      NOT NULL,
     Status         ENUM('PENDING','EXECUTED','CANCELLED')  NOT NULL DEFAULT 'PENDING',
     Price          DECIMAL(15,2),
     Quantity       INT,
@@ -193,12 +195,14 @@ CREATE TABLE stock_transaction (
     Broker_ID         INT                 NOT NULL,
     Type              ENUM('BUY','SELL')  NOT NULL,
     Price             DECIMAL(15,2)       NOT NULL,
+    Quantity          INT                 NOT NULL,
     Transaction_Date  DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_stock_transaction PRIMARY KEY (Transaction_ID),
     CONSTRAINT fk_txn_order         FOREIGN KEY (Order_ID)  REFERENCES Orders (Order_ID),
     CONSTRAINT fk_txn_client        FOREIGN KEY (Client_ID) REFERENCES Client (Client_ID),
     CONSTRAINT fk_txn_broker        FOREIGN KEY (Broker_ID) REFERENCES Broker (Broker_ID),
-    CONSTRAINT chk_txn_price        CHECK (Price > 0)
+    CONSTRAINT chk_txn_price        CHECK (Price > 0),
+    CONSTRAINT chk_txn_qty          CHECK (Quantity > 0)
 );
 
 -- ── 13. Tax ──────────────────────────────────────────────────

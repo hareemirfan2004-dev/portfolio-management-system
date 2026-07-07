@@ -179,32 +179,32 @@ INSERT INTO Trigger_Price (Alert_ID, Watchlist_ID, Trigger_Condition, Trigger_Pr
 -- IDs 1-10  |  Client refs 1-10, Broker refs 1-10, Investment refs 1-10
 -- Orders 1-8: EXECUTED (will receive stock_transaction records)
 -- Order 9: PENDING, Order 10: CANCELLED
-INSERT INTO Orders (Order_ID, Client_ID, Broker_ID, Investment_ID, Status,      Price,   Quantity, Order_Date) VALUES
-(1,   1,  1,  1, 'EXECUTED',  175.50,  50, '2023-01-15 09:30:00'),  -- James BUY AAPL
-(2,   1,  1,  2, 'EXECUTED',  380.00,  30, '2023-02-20 10:15:00'),  -- James BUY MSFT
-(3,   2,  2,  3, 'EXECUTED',  160.00,  20, '2023-03-10 11:00:00'),  -- Sofia BUY GOOGL
-(4,   2,  2,  8, 'EXECUTED',  410.00,  15, '2023-03-15 14:30:00'),  -- Sofia BUY VFIAX
-(5,   3,  3,  4, 'EXECUTED',  170.00,  25, '2023-04-05 09:45:00'),  -- Marcus BUY AMZN
-(6,   4,  4,  5, 'EXECUTED',  452.00,  10, '2023-05-12 10:30:00'),  -- Emily BUY META
-(7,   5,  5,  6, 'EXECUTED',  185.00,  40, '2023-06-18 11:15:00'),  -- Raj BUY JPM
-(8,   6,  6,  7, 'EXECUTED',  220.00,  20, '2023-07-22 13:00:00'),  -- Laura SELL TSLA
-(9,   7,  7,  9, 'PENDING',   175.00,   8, '2024-01-10 09:00:00'),  -- David pending FCNTX
-(10,  8,  8, 10, 'CANCELLED', 155.00,   5, '2024-01-12 10:30:00');  -- Priya cancelled TRBCX
+INSERT INTO Orders (Order_ID, Client_ID, Broker_ID, Investment_ID, Order_Type, Status,      Price,   Quantity, Order_Date) VALUES
+(1,   1,  1,  1, 'BUY',  'EXECUTED',  175.50,  50, '2023-01-15 09:30:00'),  -- James BUY AAPL
+(2,   1,  1,  2, 'BUY',  'EXECUTED',  380.00,  30, '2023-02-20 10:15:00'),  -- James BUY MSFT
+(3,   2,  2,  3, 'BUY',  'EXECUTED',  160.00,  20, '2023-03-10 11:00:00'),  -- Sofia BUY GOOGL
+(4,   2,  2,  8, 'BUY',  'EXECUTED',  410.00,  15, '2023-03-15 14:30:00'),  -- Sofia BUY VFIAX
+(5,   3,  3,  4, 'BUY',  'EXECUTED',  170.00,  25, '2023-04-05 09:45:00'),  -- Marcus BUY AMZN
+(6,   4,  4,  5, 'BUY',  'EXECUTED',  452.00,  10, '2023-05-12 10:30:00'),  -- Emily BUY META
+(7,   5,  5,  6, 'BUY',  'EXECUTED',  185.00,  40, '2023-06-18 11:15:00'),  -- Raj BUY JPM
+(8,   6,  6,  7, 'SELL', 'EXECUTED',  220.00,  20, '2023-07-22 13:00:00'),  -- Laura SELL TSLA
+(9,   7,  7,  9, 'BUY',  'PENDING',   175.00,   8, '2024-01-10 09:00:00'),  -- David pending FCNTX (assuming BUY)
+(10,  8,  8, 10, 'SELL', 'CANCELLED', 155.00,   5, '2024-01-12 10:30:00');  -- Priya cancelled TRBCX (assuming SELL)
 
 -- ── 12. stock_transaction ────────────────────────────────────
 -- IDs 1-10  |  Order refs 1-8 (EXECUTED only); rows 9-10 have NULL Order_ID
 -- Client and Broker must match the referenced order for data consistency
-INSERT INTO stock_transaction (Transaction_ID, Order_ID, Client_ID, Broker_ID, Type,   Price,   Transaction_Date) VALUES
-(1,   1,  1,  1, 'BUY',  175.50, '2023-01-15 09:31:04'),
-(2,   2,  1,  1, 'BUY',  380.00, '2023-02-20 10:16:22'),
-(3,   3,  2,  2, 'BUY',  160.00, '2023-03-10 11:01:55'),
-(4,   4,  2,  2, 'BUY',  410.00, '2023-03-15 14:31:08'),
-(5,   5,  3,  3, 'BUY',  170.00, '2023-04-05 09:46:30'),
-(6,   6,  4,  4, 'BUY',  452.00, '2023-05-12 10:31:17'),
-(7,   7,  5,  5, 'BUY',  185.00, '2023-06-18 11:16:44'),
-(8,   8,  6,  6, 'SELL', 220.00, '2023-07-22 13:01:59'),
-(9,  NULL, 9,  9, 'BUY',  265.18, '2023-08-30 09:15:00'),  -- manual / off-platform trade
-(10, NULL,10, 10, 'SELL',  89.15, '2023-09-14 14:45:00');  -- manual / off-platform trade
+INSERT INTO stock_transaction (Transaction_ID, Order_ID, Client_ID, Broker_ID, Type,   Price,   Quantity, Transaction_Date) VALUES
+(1,   1,  1,  1, 'BUY',  175.50, 50, '2023-01-15 09:31:04'),
+(2,   2,  1,  1, 'BUY',  380.00, 30, '2023-02-20 10:16:22'),
+(3,   3,  2,  2, 'BUY',  160.00, 20, '2023-03-10 11:01:55'),
+(4,   4,  2,  2, 'BUY',  410.00, 15, '2023-03-15 14:31:08'),
+(5,   5,  3,  3, 'BUY',  170.00, 25, '2023-04-05 09:46:30'),
+(6,   6,  4,  4, 'BUY',  452.00, 10, '2023-05-12 10:31:17'),
+(7,   7,  5,  5, 'BUY',  185.00, 40, '2023-06-18 11:16:44'),
+(8,   8,  6,  6, 'SELL', 220.00, 20, '2023-07-22 13:01:59'),
+(9,  NULL, 9,  9, 'BUY',  265.18, 10, '2023-08-30 09:15:00'),  -- manual / off-platform trade
+(10, NULL,10, 10, 'SELL',  89.15,  5, '2023-09-14 14:45:00');  -- manual / off-platform trade
 
 -- ── 13. Tax ──────────────────────────────────────────────────
 -- IDs 1-10  |  Client refs 1-10, Broker refs 1-10

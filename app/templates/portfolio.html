@@ -2,82 +2,89 @@
 {% block title %}{{ client.Name }} — Portfolio{% endblock %}
 
 {% block content %}
-<div class="gap-sm" style="margin-bottom:1.25rem">
-  <h2>{{ client.Name }}</h2>
-  <span class="muted">{{ client.Email }}</span>
-  <div class="ml-auto" style="display:flex;gap:.5rem">
-    <a class="btn btn-sm"
-       href="{{ url_for('place_order', client_id=client.Client_ID) }}">+ Place Order</a>
-    <a class="btn btn-sm btn-muted"
-       href="{{ url_for('clients') }}">← Clients</a>
+<div class="gap-sm" style="margin-bottom:2rem; align-items: flex-end;">
+  <div>
+    <h2>{{ client.Name }}'s Portfolio</h2>
+    <span class="muted" style="display:flex; align-items:center; gap:0.5rem">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+      {{ client.Email }}
+    </span>
+  </div>
+  <div class="ml-auto" style="display:flex;gap:1rem">
+    <a class="btn btn-muted" href="{{ url_for('clients') }}">← Back to Clients</a>
+    <a class="btn" href="{{ url_for('place_order', client_id=client.Client_ID) }}">+ Place Order</a>
   </div>
 </div>
 
 {% if holdings %}
-<table>
-  <thead>
-    <tr>
-      <th>Symbol</th>
-      <th>Investment</th>
-      <th>Type</th>
-      <th class="num">Qty</th>
-      <th class="num">Avg Cost</th>
-      <th class="num">Current Price</th>
-      <th class="num">Unrealized P&amp;L</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for h in holdings %}
-    <tr>
-      <td><strong>{{ h.Symbol }}</strong></td>
-      <td>{{ h.Investment_Name }}</td>
-      <td>
-        {% if h.Investment_Type == 'STOCK' %}
-          <span class="badge badge-stock">Stock</span>
-        {% else %}
-          <span class="badge badge-fund">Fund</span>
-        {% endif %}
-      </td>
-      <td class="num">{{ h.Quantity }}</td>
-      <td class="num">${{ h.Average_Price | money }}</td>
-      <td class="num">
-        {% if h.Current_Price is not none %}
-          ${{ h.Current_Price | money }}
-        {% else %}—{% endif %}
-      </td>
-      <td class="num">
-        {% if h.Unrealized_PL is not none %}
-          <span class="{{ 'gain' if h.Unrealized_PL >= 0 else 'loss' }}">
-            {{ h.Unrealized_PL | pl }}
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Symbol</th>
+        <th>Investment</th>
+        <th>Type</th>
+        <th class="num">Qty</th>
+        <th class="num">Avg Cost</th>
+        <th class="num">Current Price</th>
+        <th class="num">Unrealized P&amp;L</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for h in holdings %}
+      <tr>
+        <td><strong style="color: #fff;">{{ h.Symbol }}</strong></td>
+        <td>{{ h.Investment_Name }}</td>
+        <td>
+          {% if h.Investment_Type == 'STOCK' %}
+            <span class="badge badge-stock">Stock</span>
+          {% else %}
+            <span class="badge badge-fund">Fund</span>
+          {% endif %}
+        </td>
+        <td class="num">{{ h.Quantity }}</td>
+        <td class="num">${{ h.Average_Price | money }}</td>
+        <td class="num">
+          {% if h.Current_Price is not none %}
+            ${{ h.Current_Price | money }}
+          {% else %}<span class="muted">—</span>{% endif %}
+        </td>
+        <td class="num">
+          {% if h.Unrealized_PL is not none %}
+            <span class="{{ 'gain' if h.Unrealized_PL >= 0 else 'loss' }}">
+              {{ h.Unrealized_PL | pl }}
+            </span>
+          {% else %}<span class="muted">—</span>{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr style="background: rgba(255,255,255,0.02);">
+        <td colspan="3" style="font-weight:600; padding:1.25rem">Total Portfolio</td>
+        <td class="num" style="font-weight:600; padding:1.25rem; color:#fff;">
+          {{ holdings | sum(attribute='Quantity') }}
+        </td>
+        <td></td>
+        <td></td>
+        <td class="num" style="padding:1.25rem">
+          {% set total_pl = holdings | sum(attribute='Unrealized_PL') %}
+          <span class="{{ 'gain' if total_pl >= 0 else 'loss' }}" style="font-weight:700; font-size: 1.1rem;">
+            {{ total_pl | pl }}
           </span>
-        {% else %}—{% endif %}
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-  <tfoot>
-    <tr style="background:#f8faff">
-      <td colspan="3" style="font-weight:600;padding:.6rem .9rem">Total</td>
-      <td class="num" style="font-weight:600">
-        {{ holdings | sum(attribute='Quantity') }}
-      </td>
-      <td></td>
-      <td></td>
-      <td class="num">
-        {% set total_pl = holdings | sum(attribute='Unrealized_PL') %}
-        <span class="{{ 'gain' if total_pl >= 0 else 'loss' }}" style="font-weight:600">
-          {{ total_pl | pl }}
-        </span>
-      </td>
-    </tr>
-  </tfoot>
-</table>
-
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
 {% else %}
-<div class="card" style="text-align:center;color:#6b7280;padding:2.5rem">
-  No holdings on record.
-  <a href="{{ url_for('place_order', client_id=client.Client_ID) }}">Place an order</a>
-  to add a position.
+<div class="card" style="text-align:center; padding: 4rem 2rem;">
+  <div style="margin-bottom: 1rem; color: var(--text-muted);">
+    <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="opacity: 0.5; margin:0 auto"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+  </div>
+  <h3 style="margin-bottom: 0.5rem; color: #fff; font-size: 1.25rem;">No holdings found</h3>
+  <p class="muted" style="margin-bottom: 1.5rem;">This client currently doesn't have any open positions in their portfolio.</p>
+  <a class="btn" href="{{ url_for('place_order', client_id=client.Client_ID) }}">Place first order</a>
 </div>
 {% endif %}
 {% endblock %}

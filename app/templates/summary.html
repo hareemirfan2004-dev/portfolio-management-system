@@ -2,52 +2,54 @@
 {% block title %}Portfolio Summary — Portfolio Manager{% endblock %}
 
 {% block content %}
-<div class="gap-sm" style="margin-bottom:1.1rem">
-  <h2>Client Portfolio Summary</h2>
-  <span class="muted">from <code>ClientPortfolioSummary</code> view · ranked by return %</span>
+<div class="gap-sm" style="margin-bottom:2rem; justify-content: space-between;">
+  <div>
+    <h2>Platform Leaderboard</h2>
+    <span class="muted">Ranked by total return percentage across all clients</span>
+  </div>
 </div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Client</th>
-      <th class="num">Holdings</th>
-      <th class="num">Stocks</th>
-      <th class="num">Funds</th>
-      <th class="num">Cost Basis</th>
-      <th class="num">Market Value</th>
-      <th class="num">Unrealized P&amp;L</th>
-      <th class="num">Return %</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for r in rows %}
-    <tr>
-      <td>
-        <a href="{{ url_for('portfolio', client_id=r.Client_ID) }}">
-          {{ r.Client_Name }}
-        </a>
-        <div class="muted">{{ r.Email }}</div>
-      </td>
-      <td class="num">{{ r.Holdings }}</td>
-      <td class="num">{{ r.Stock_Holdings }}</td>
-      <td class="num">{{ r.Fund_Holdings }}</td>
-      <td class="num">${{ r.Cost_Basis | money }}</td>
-      <td class="num">${{ r.Market_Value | money }}</td>
-      <td class="num">
-        <span class="{{ 'gain' if r.Unrealized_PL >= 0 else 'loss' }}">
-          {{ r.Unrealized_PL | pl }}
-        </span>
-      </td>
-      <td class="num">
-        <span class="{{ 'gain' if r.Return_Pct >= 0 else 'loss' }}">
-          {{ '+' if r.Return_Pct >= 0 else '' }}{{ r.Return_Pct | money }}%
-        </span>
-      </td>
-    </tr>
-    {% else %}
-    <tr class="empty-row"><td colspan="8">No portfolio data found.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Client</th>
+        <th class="num">Positions</th>
+        <th class="num">Cost Basis</th>
+        <th class="num">Market Value</th>
+        <th class="num">Unrealized P&amp;L</th>
+        <th class="num">Return %</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+      <tr>
+        <td>
+          <a href="{{ url_for('portfolio', client_id=r.Client_ID) }}" style="color: #fff; text-decoration: none; font-weight: 500; display: block; margin-bottom: 0.2rem;">
+            {{ r.Client_Name }}
+          </a>
+          <div class="muted" style="font-size: 0.8rem;">{{ r.Email }}</div>
+        </td>
+        <td class="num">
+          {{ r.Holdings }} <span class="muted" style="font-size: 0.75rem">({{ r.Stock_Holdings }}S, {{ r.Fund_Holdings }}F)</span>
+        </td>
+        <td class="num">${{ r.Cost_Basis | money }}</td>
+        <td class="num" style="color: #fff;">${{ r.Market_Value | money }}</td>
+        <td class="num">
+          <span class="{{ 'gain' if r.Unrealized_PL >= 0 else 'loss' }}">
+            {{ r.Unrealized_PL | pl }}
+          </span>
+        </td>
+        <td class="num">
+          <span class="badge {{ 'badge-stock' if r.Return_Pct >= 0 else 'badge-fund' }}" style="font-size: 0.85rem; padding: 0.3rem 0.6rem; border-radius: 6px; {{ 'background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.3)' if r.Return_Pct >= 0 else 'background: rgba(239, 68, 68, 0.15); color: #f87171; border-color: rgba(239, 68, 68, 0.3)' }}">
+            {{ '+' if r.Return_Pct > 0 else '' }}{{ r.Return_Pct | money }}%
+          </span>
+        </td>
+      </tr>
+      {% else %}
+      <tr class="empty-row"><td colspan="6">No portfolio data found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}

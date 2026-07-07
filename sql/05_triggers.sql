@@ -54,13 +54,23 @@ CREATE TRIGGER trg_orders_before_update
 BEFORE UPDATE ON Orders
 FOR EACH ROW
 BEGIN
+    IF NEW.Quantity IS NULL OR NEW.Quantity <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Order rejected: Quantity must be greater than zero.';
+    END IF;
+
+    IF NEW.Price IS NULL OR NEW.Price <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Order rejected: Price must be greater than zero.';
+    END IF;
+
     -- Protect core financial fields on finalised orders
     IF OLD.Status IN ('EXECUTED', 'CANCELLED')
-       AND (   NEW.Price         <> OLD.Price
-            OR NEW.Quantity      <> OLD.Quantity
-            OR NEW.Investment_ID <> OLD.Investment_ID
-            OR NEW.Client_ID     <> OLD.Client_ID
-            OR NEW.Broker_ID     <> OLD.Broker_ID)
+       AND (   NOT (NEW.Price         <=> OLD.Price)
+            OR NOT (NEW.Quantity      <=> OLD.Quantity)
+            OR NOT (NEW.Investment_ID <=> OLD.Investment_ID)
+            OR NOT (NEW.Client_ID     <=> OLD.Client_ID)
+            OR NOT (NEW.Broker_ID     <=> OLD.Broker_ID))
     THEN
         SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'Cannot modify a finalised (EXECUTED or CANCELLED) order.';
@@ -184,14 +194,13 @@ BEGIN
         SET v_investment_id  = COALESCE(v_investment_id, 0);
 
         -- client's average cost for this investment (from Portfolio)
-        SELECT Average_Price
-        INTO   v_avg_cost
-        FROM   Portfolio
-        WHERE  Client_ID     = NEW.Client_ID
-          AND  Investment_ID = v_investment_id
-        LIMIT  1;
-
-        SET v_avg_cost = COALESCE(v_avg_cost, 0.00);
+        SET v_avg_cost = COALESCE((
+            SELECT Average_Price
+            FROM   Portfolio
+            WHERE  Client_ID     = NEW.Client_ID
+              AND  Investment_ID = v_investment_id
+            LIMIT  1
+        ), 0.00);
 
         -- market / instrument context needed for Insights
         SELECT i.Market_ID, i.Stock_ID, i.Mutual_Funds_ID
@@ -219,9 +228,9 @@ BEGIN
             (NEW.Client_ID, NEW.Broker_ID, v_tax_year,
              v_profit, v_loss, v_tax_amt)
         ON DUPLICATE KEY UPDATE
-            Profit = Profit + v_profit,
-            Loss   = Loss   + v_loss,
-            Tax    = Tax    + v_tax_amt;
+            Profit = COALESCE(Profit, 0) + v_profit,
+            Loss   = COALESCE(Loss, 0)   + v_loss,
+            Tax    = COALESCE(Tax, 0)    + v_tax_amt;
 
         -- ── Part C: append Insights row for this realized trade ─
         -- Each sell trade produces its own Insights record so the
