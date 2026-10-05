@@ -166,13 +166,24 @@ SECRET_KEY=any-random-string
 pip install -r requirements.txt
 ```
 
-### 3. Start the server
+### 3. Create the admin login
+
+Every page requires a login. Run this once after loading the database:
+
+```bash
+# From the project root (it reads .env from the current directory)
+python setup_auth.py
+```
+
+It creates the `Admins` table and an `admin` account with password `password123`. Re-running it resets that account to the default password. These credentials are for local development only.
+
+### 4. Start the server
 
 ```bash
 python app/main.py
 ```
 
-Open **http://localhost:5000** in your browser.
+Open **http://localhost:5000** in your browser and sign in as `admin` / `password123`.
 
 ### Available pages
 
