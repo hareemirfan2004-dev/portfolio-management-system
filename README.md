@@ -189,10 +189,14 @@ Open **http://localhost:5000** in your browser and sign in as `admin` / `passwor
 
 | URL | Description |
 |-----|-------------|
-| `/` | Redirects to Clients |
+| `/` | Redirects to Clients when signed in, otherwise to Login |
+| `/login` | Admin sign-in |
+| `/logout` | Signs out and returns to Login |
 | `/clients` | List all clients; add a new client |
 | `/clients/<id>/portfolio` | Holdings table with live unrealized P&L |
+| `/orders` | All orders, PENDING first, with an Execute button on each pending one |
 | `/orders/new` | Place a new PENDING order |
+| `POST /orders/<id>/execute` | Executes a PENDING order by inserting its `stock_transaction` row; the trigger updates status, tax and insights |
 | `/summary` | `ClientPortfolioSummary` view — all clients ranked by return % |
 
 ---
