@@ -53,10 +53,14 @@ portfolio-mgmt/
 │   ├── db.py                  — DB connection module (reads .env)
 │   └── templates/
 │       ├── base.html          — Shared layout, CSS, nav
+│       ├── login.html         — Admin login form
 │       ├── clients.html       — Client list + add form
 │       ├── portfolio.html     — Per-client holdings with live P&L
 │       ├── order.html         — Place a new order
+│       ├── orders.html        — Order list; execute pending orders
 │       └── summary.html       — ClientPortfolioSummary view
+├── init_db.bat                — Windows: loads schema, seed, views, triggers, procedure
+├── setup_auth.py              — Creates Admins table + default admin login
 ├── requirements.txt
 ├── .env.example               — Credential template (copy to .env)
 └── README.md
