@@ -84,7 +84,7 @@
       <svg width="24" height="24" fill="none" stroke="var(--accent)" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink: 0"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
       <span>
         Orders are created with status <strong style="color: #fff">PENDING</strong>.
-        To execute an order, an associated row must be inserted into <code>stock_transaction</code>, which automatically flips the status to <strong style="color: #fff">EXECUTED</strong>.
+        To execute one, use <strong style="color: #fff">Execute Trade</strong> on the <a href="{{ url_for('orders') }}">Orders</a> page, which records the transaction and flips the status to <strong style="color: #fff">EXECUTED</strong>.
       </span>
     </p>
   </div>
