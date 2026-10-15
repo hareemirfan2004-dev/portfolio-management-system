@@ -169,7 +169,7 @@
     {% if session.get('admin_id') %}
       <a href="{{ url_for('clients') }}">Clients</a>
       <a href="{{ url_for('place_order') }}">Place Order</a>
-      <a href="{{ url_for('orders') }}">Pending Orders</a>
+      <a href="{{ url_for('orders') }}">Orders</a>
       <a href="{{ url_for('summary') }}">Summary</a>
       <a href="{{ url_for('logout') }}" class="btn btn-sm btn-muted" style="margin-left: 1rem;">Logout</a>
     {% endif %}
