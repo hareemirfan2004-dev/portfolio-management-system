@@ -13,8 +13,8 @@
     <form method="post">
       <div class="form-grid">
 
-        <div class="form-full">
-          <label>Order Type</label>
+        <fieldset class="form-full">
+          <legend>Order Type</legend>
           <div class="radio-row" style="background: rgba(0,0,0,0.2); padding: 1rem 1.5rem; border-radius: 8px; border: 1px solid var(--card-border);">
             <label style="color: #fff;">
               <input type="radio" name="type" value="BUY" required checked> BUY
@@ -23,7 +23,7 @@
               <input type="radio" name="type" value="SELL"> SELL
             </label>
           </div>
-        </div>
+        </fieldset>
 
         <div>
           <label for="client_id">Client <span style="color:var(--loss)">*</span></label>
